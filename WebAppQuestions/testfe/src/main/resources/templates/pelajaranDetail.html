@@ -1,0 +1,32 @@
+<input type="hidden" id="txtTitle" th:value="${title}"/>
+<div class="card">
+  <div class="card-body">
+    <form th:action="@{/pelajaran/update}" id="frmEditPelajaran" method="post">
+      <div class="form-group">
+        <label for="txtId" class="form-label h6">ID</label>
+        <input type="text" class="form-control" id="txtId" name="id" th:value="${pelajaran.id}" readonly />
+      </div>
+      <div class="form-group">
+        <label for="txtName" class="form-label h6">Name</label>
+        <input type="text" class="form-control" id="txtName" name="name" th:value="${pelajaran.name}" readonly />
+      </div>
+      <div class="form-group">
+        <label for="txtCode" class="form-label h6">Code</label>
+        <input type="text" class="form-control" id="txtCode" name="code" th:value="${pelajaran.code}" readonly />
+      </div>
+      <div class="form-group">
+        <label for="txtDeleted" class="form-label h6">Deleted</label>
+        <input type="text" class="form-control" id="txtDeleted" name="deleted" th:value="${pelajaran.deleted}" readonly />
+      </div>
+      <div class="text-right">
+        <!-- You can add additional buttons or actions here if needed -->
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#staticModalLabel").text($("#txtTitle").val());
+  });
+</script>
