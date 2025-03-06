@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Question 2 (Cascading Dropdowns)</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <h1 class="mb-4">Question 2 (Cascading Dropdowns)</h1>
+
+        <div class="mb-3">
+            <label for="negara" class="form-label">Negara:</label>
+            <select id="negara" class="form-select w-100">
+                <option value="" selected disabled>Pilih Negara</option>
+                <option th:each="negara : ${negaraList}" 
+                        th:value="${negara.id}" 
+                        th:text="${negara.name}"></option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="provinsi" class="form-label">Provinsi:</label>
+            <select id="provinsi" class="form-select w-100" disabled>
+                <option value="" selected disabled>Pilih Provinsi</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="kota" class="form-label">Kota:</label>
+            <select id="kota" class="form-select w-100" disabled>
+                <option value="" selected disabled>Pilih Kota</option>
+            </select>
+        </div>
+
+        <div th:if="${errorMsg}" class="text-danger text-center">
+            <strong th:text="${errorMsg}"></strong>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+                $("#negara").change(function () {
+                    let negaraId = $(this).val();
+
+
+                    $("#provinsi")
+                        .empty()
+                        .append('<option value="" selected disabled>Pilih Provinsi</option>')
+                        .prop("disabled", true);
+                    $("#kota")
+                        .empty()
+                        .append('<option value="" selected disabled>Pilih Kota</option>')
+                        .prop("disabled", true);
+
+                    if (negaraId) {
+
+                        $("#provinsi")
+                            .empty()
+                            .append('<option selected disabled>Loading...</option>');
+                        
+                        $.get(`/question2/provinsi/${negaraId}`, function (data) {
+                            $("#provinsi")
+                                .empty()
+                                .append('<option value="" selected disabled>Pilih Provinsi</option>');
+                            
+                            if (data && data.length > 0) {
+                                data.forEach(provinsi => {
+                                    $("#provinsi").append(new Option(provinsi.name, provinsi.id));
+                                });
+                                $("#provinsi").prop("disabled", false);
+                            } else {
+                                $("#provinsi")
+                                    .empty()
+                                    .append('<option selected disabled>No data found</option>');
+                            }
+                        }).fail(function () {
+                            $("#provinsi")
+                                .empty()
+                                .append('<option selected disabled>Error loading data</option>');
+                        });
+                    }
+                });
+
+
+                $("#provinsi").change(function () {
+                    let provinsiId = $(this).val();
+
+
+                    $("#kota")
+                        .empty()
+                        .append('<option value="" selected disabled>Pilih Kota</option>')
+                        .prop("disabled", true);
+
+                    if (provinsiId) {
+
+                        $("#kota")
+                            .empty()
+                            .append('<option selected disabled>Loading...</option>');
+                        
+                        $.get(`/question2/kota/${provinsiId}`, function (data) {
+                            $("#kota")
+                                .empty()
+                                .append('<option value="" selected disabled>Pilih Kota</option>');
+                            
+                            if (data && data.length > 0) {
+                                data.forEach(kota => {
+                                    $("#kota").append(new Option(kota.name, kota.id));
+                                });
+                                $("#kota").prop("disabled", false);
+                            } else {
+                                $("#kota")
+                                    .empty()
+                                    .append('<option selected disabled>No data found</option>');
+                            }
+                        }).fail(function () {
+                            $("#kota")
+                                .empty()
+                                .append('<option selected disabled>Error loading data</option>');
+                        });
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
